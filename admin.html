@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HubitHab · Admin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+
+<!-- Password gate -->
+<div id="password-gate" class="password-gate">
+  <div class="password-card">
+    <h1>Admin Panel</h1>
+    <p class="subtitle">HubitHab Open Financials</p>
+    <div class="form-group">
+      <label for="pw-input">Password</label>
+      <input id="pw-input" type="password" class="form-input"
+             placeholder="Enter password" autocomplete="current-password">
+    </div>
+    <button id="pw-btn" class="btn btn-primary btn-block" type="button">Unlock</button>
+    <p id="pw-error" class="error-msg" hidden></p>
+  </div>
+</div>
+
+<!-- Admin panel (revealed after auth) -->
+<div id="admin-panel" class="admin-panel" hidden>
+
+  <div class="admin-header">
+    <h1>Open Financials — Admin</h1>
+    <a href="index.html" class="btn btn-secondary btn-sm">← Public page</a>
+  </div>
+
+  <!-- GitHub config -->
+  <div class="admin-section">
+    <h2>GitHub Config</h2>
+    <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:14px">
+      Stored in session memory only — clears when you close the tab.
+    </p>
+    <div class="config-grid">
+      <div class="form-group">
+        <label for="gh-owner">Owner / Org</label>
+        <input id="gh-owner" type="text" class="form-input" placeholder="e.g. singledev-eu">
+      </div>
+      <div class="form-group">
+        <label for="gh-repo">Repository</label>
+        <input id="gh-repo" type="text" class="form-input" placeholder="e.g. HubitHabMoney">
+      </div>
+      <div class="form-group">
+        <label for="gh-branch">Branch</label>
+        <input id="gh-branch" type="text" class="form-input" placeholder="main">
+      </div>
+      <div class="form-group">
+        <label for="gh-token">Personal Access Token</label>
+        <input id="gh-token" type="password" class="form-input" placeholder="github_pat_…">
+      </div>
+    </div>
+    <div class="config-actions">
+      <button id="save-config-btn" class="btn btn-secondary btn-sm" type="button">
+        Save config to session
+      </button>
+      <button id="load-data-btn" class="btn btn-secondary btn-sm" type="button">
+        ↻ Load current data
+      </button>
+    </div>
+    <p id="config-status" style="font-size:0.78rem;margin-top:8px"></p>
+  </div>
+
+  <!-- Month editor -->
+  <div class="admin-section">
+    <h2>Edit Month</h2>
+
+    <div class="form-group" style="max-width:280px">
+      <label for="month-select">Month</label>
+      <select id="month-select" class="form-input select-input">
+        <option value="">— select —</option>
+      </select>
+    </div>
+
+    <!-- New month form -->
+    <div id="new-month-form" class="new-month-form" hidden>
+      <div class="new-month-grid">
+        <div class="form-group" style="margin-bottom:0">
+          <label for="new-month-input">Month (YYYY-MM)</label>
+          <input id="new-month-input" type="text" class="form-input"
+                 placeholder="2025-06" maxlength="7">
+        </div>
+        <div class="checkbox-row">
+          <input id="copy-prev" type="checkbox">
+          <label for="copy-prev">Copy expenses from previous month</label>
+        </div>
+        <div style="margin-top:20px">
+          <button id="create-month-btn" class="btn btn-primary btn-sm" type="button">
+            Create month
+          </button>
+        </div>
+      </div>
+      <p id="new-month-error" class="error-msg" hidden></p>
+    </div>
+
+    <!-- Month data editor -->
+    <div id="month-editor" hidden>
+
+      <div class="form-group" style="margin-top:18px;max-width:200px">
+        <label for="mrr-input">MRR (€)</label>
+        <input id="mrr-input" type="number" class="form-input"
+               min="0" step="0.01" placeholder="0.00">
+      </div>
+
+      <div class="expenses-header">
+        <span>Expenses</span>
+        <button id="add-expense-btn" class="btn btn-secondary btn-sm" type="button">
+          + Add row
+        </button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="editable-table">
+          <thead>
+            <tr>
+              <th style="min-width:160px">Label</th>
+              <th style="min-width:90px">Amount (€)</th>
+              <th style="min-width:105px">Category</th>
+              <th style="min-width:180px">Note</th>
+              <th style="width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="expenses-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="save-bar">
+        <button id="save-btn" class="btn btn-primary" type="button">Save changes</button>
+        <span id="save-status" class="save-status"></span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- Config constant — change this before deploying -->
+<script>
+  const ADMIN_PASSWORD = "REPLACE_ME_BEFORE_DEPLOY";
+</script>
+<script src="admin.js"></script>
+
+</body>
+</html>

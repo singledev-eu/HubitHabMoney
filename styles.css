@@ -1,0 +1,626 @@
+/* ─── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --bg: #f5f5f7;
+  --card-bg: #ffffff;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-muted: #aeaeb2;
+  --green: #30d158;
+  --green-pale: #eafaf0;
+  --green-text: #1a7a3a;
+  --red: #ff453a;
+  --red-pale: #fff5f4;
+  --red-text: #c0392b;
+  --blue: #0a84ff;
+  --blue-pale: #e8f3ff;
+  --blue-text: #0055b3;
+  --orange: #ff9f0a;
+  --orange-pale: #fff8e8;
+  --orange-text: #a05a00;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+  --shadow-hover: 0 4px 20px rgba(0, 0, 0, 0.11);
+  --radius: 16px;
+  --radius-sm: 8px;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ─── Layout ─────────────────────────────────────────────────────────────────── */
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────────── */
+header {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 14px 0;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-link {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.logo-link:hover { text-decoration: none; opacity: 0.7; }
+
+.header-sep { color: var(--text-muted); }
+.header-title { color: var(--text-secondary); font-size: 0.95rem; }
+
+/* ─── Badges ─────────────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.badge-public {
+  background: var(--green-pale);
+  color: var(--green-text);
+  border: 1px solid rgba(48, 209, 88, 0.25);
+}
+.badge-eu {
+  background: #e8eeff;
+  color: #003399;
+  border: 1px solid rgba(0, 51, 153, 0.2);
+}
+.badge-fixed {
+  background: var(--blue-pale);
+  color: var(--blue-text);
+}
+.badge-variable {
+  background: var(--orange-pale);
+  color: var(--orange-text);
+}
+
+/* ─── Main ───────────────────────────────────────────────────────────────────── */
+main { padding: 40px 0 72px; }
+
+.intro {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.6;
+}
+
+.section-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+}
+
+/* ─── Hero grid ──────────────────────────────────────────────────────────────── */
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.hero-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+}
+
+.hero-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.hero-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.hero-value.green { color: var(--green-text); }
+.hero-value.red   { color: var(--red-text); }
+
+.hero-note {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ─── Chart section ──────────────────────────────────────────────────────────── */
+.chart-section {
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.chart-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.trend-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.chart-label {
+  font-family: var(--font);
+  font-size: 10px;
+  fill: var(--text-muted);
+}
+
+.prerevenue-state {
+  text-align: center;
+  padding: 44px 20px;
+}
+.prerevenue-state .emoji { font-size: 2.4rem; margin-bottom: 12px; }
+.prerevenue-state p {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.prerevenue-state .sub {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* ─── Month cards ────────────────────────────────────────────────────────────── */
+.month-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 10px;
+  transition: box-shadow 0.18s ease;
+}
+.month-card:hover { box-shadow: var(--shadow-hover); }
+
+.month-card > summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  user-select: none;
+  gap: 16px;
+}
+.month-card > summary::-webkit-details-marker { display: none; }
+
+.month-summary-left {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.month-label {
+  font-size: 0.98rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.month-kpis {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.month-kpi {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.month-kpi.positive { color: var(--green-text); }
+.month-kpi.negative { color: var(--red-text); }
+
+.month-chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  transition: transform 0.2s ease;
+}
+.month-card[open] .month-chevron { transform: rotate(180deg); }
+
+.month-body {
+  padding: 0 22px 22px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+/* ─── Bar chart ──────────────────────────────────────────────────────────────── */
+.bar-chart { margin-bottom: 18px; }
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.bar-row:last-child { margin-bottom: 0; }
+
+.bar-label {
+  width: 68px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.bar-track {
+  flex: 1;
+  height: 7px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.bar-mrr      { background: var(--green); }
+.bar-expenses { background: var(--red); }
+
+.bar-value {
+  width: 62px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Expense table ──────────────────────────────────────────────────────────── */
+.expense-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.expense-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0 14px 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.expense-table td {
+  padding: 9px 14px 9px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  vertical-align: top;
+}
+.expense-table tr:last-child td { border-bottom: none; }
+.expense-table .amount {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.expense-table .note {
+  color: var(--text-secondary);
+  font-size: 0.77rem;
+}
+
+/* ─── Loading / error ────────────────────────────────────────────────────────── */
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 22px 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+/* ─── Admin — shared form elements ──────────────────────────────────────────── */
+.form-group {
+  margin-bottom: 12px;
+}
+.form-group label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-input {
+  width: 100%;
+  padding: 9px 13px;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.88rem;
+  color: var(--text);
+  background: white;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  appearance: none;
+}
+.form-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.12);
+}
+.form-input.error  { border-color: var(--red); }
+.form-input.select-input {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%236e6e73' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+  user-select: none;
+  white-space: nowrap;
+}
+.btn:hover   { opacity: 0.82; }
+.btn:active  { transform: scale(0.97); }
+
+.btn-primary   { background: var(--blue); color: white; }
+.btn-secondary { background: rgba(0, 0, 0, 0.07); color: var(--text); }
+.btn-danger    { background: var(--red); color: white; }
+.btn-success   { background: var(--green); color: white; }
+.btn-sm        { padding: 6px 14px; font-size: 0.78rem; }
+.btn-block     { width: 100%; }
+
+.error-msg   { font-size: 0.78rem; color: var(--red-text);   margin-top: 6px; }
+.success-msg { font-size: 0.78rem; color: var(--green-text); margin-top: 6px; }
+
+/* ─── Admin — password gate ──────────────────────────────────────────────────── */
+.admin-body { background: #f0f0f3; }
+
+.password-gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.password-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 36px;
+  box-shadow: 0 4px 28px rgba(0, 0, 0, 0.10);
+  width: 100%;
+  max-width: 340px;
+}
+
+.password-card h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.02em;
+}
+.password-card .subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+
+/* ─── Admin — panel layout ───────────────────────────────────────────────────── */
+.admin-panel {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 20px 72px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.admin-header h1 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.admin-section {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px;
+  margin-bottom: 14px;
+}
+.admin-section h2 {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+
+.config-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+/* ─── Admin — expense table ──────────────────────────────────────────────────── */
+.editable-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.editable-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  padding: 0 8px 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.editable-table td {
+  padding: 7px 8px 7px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  vertical-align: middle;
+}
+.editable-table tr:last-child td { border-bottom: none; }
+.editable-table .form-input {
+  padding: 6px 10px;
+  font-size: 0.83rem;
+}
+
+.expenses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 10px;
+}
+.expenses-header span {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.save-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
+.save-status {
+  font-size: 0.84rem;
+}
+
+.new-month-form {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 10px;
+}
+.new-month-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+}
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.checkbox-row label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  cursor: pointer;
+  margin-bottom: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-value { font-size: 1.75rem; }
+
+  .month-summary-left { flex-direction: column; gap: 4px; }
+  .month-kpis { gap: 10px; }
+
+  .config-grid { grid-template-columns: 1fr; }
+  .new-month-grid { grid-template-columns: 1fr; }
+
+  .expense-table .note { display: none; }
+
+  .header-title { display: none; }
+}

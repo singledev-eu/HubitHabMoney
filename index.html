@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HubitHab open financials — every euro in and out, tracked from day one.">
+  <title>HubitHab · Open Financials</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="header-left">
+        <a href="https://hubihab.com" class="logo-link">HubitHab</a>
+        <span class="header-sep">/</span>
+        <span class="header-title">Open Financials</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-public">Building in public 🌱</span>
+        <span class="badge badge-eu">Building in EU 🇪🇺</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div id="loading" class="loading-state">Loading…</div>
+
+  <div id="content" hidden>
+
+    <p class="intro">
+      HubitHab is an automatic habit tracker for iOS — no manual logging required.
+      Here's every euro that goes in and out, tracked from the first day.
+      No spin, no vanity metrics.
+    </p>
+
+    <!-- Hero numbers -->
+    <section id="hero-grid" class="hero-grid" aria-label="Key metrics"></section>
+
+    <!-- MRR trend chart -->
+    <section class="card chart-section" aria-label="MRR trend">
+      <h2 class="section-title">MRR Over Time</h2>
+      <div class="chart-wrap" id="trend-chart"></div>
+    </section>
+
+    <!-- Monthly breakdown -->
+    <section aria-label="Monthly breakdown">
+      <h2 class="section-title">Monthly Breakdown</h2>
+      <div id="months-list"></div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="container">
+    <p>
+      Last updated: <span id="last-updated"></span>
+      &nbsp;·&nbsp;
+      <a id="github-link" href="#">View source on GitHub</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(n) {
+  return '€' + Number(n || 0).toLocaleString('en-IE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function totalExp(month) {
+  return month.expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+}
+
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+function renderHero(latest) {
+  const exp = totalExp(latest);
+  const net = latest.mrr - exp;
+  document.getElementById('hero-grid').innerHTML = `
+    <div class="hero-card">
+      <div class="hero-label">Current MRR</div>
+      <div class="hero-value">${fmt(latest.mrr)}</div>
+      <div class="hero-note">${latest.label}</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-label">Monthly Expenses</div>
+      <div class="hero-value">${fmt(exp)}</div>
+      <div class="hero-note">${latest.expenses.length} line item${latest.expenses.length !== 1 ? 's' : ''}</div>
+    </div>
+    <div class="hero-card">
+      <div class="hero-label">Net</div>
+      <div class="hero-value ${net >= 0 ? 'green' : 'red'}">${fmt(net)}</div>
+      <div class="hero-note">MRR &minus; expenses</div>
+    </div>
+  `;
+}
+
+// ─── Trend chart ──────────────────────────────────────────────────────────────
+function renderTrend(months) {
+  const el = document.getElementById('trend-chart');
+  const sorted = [...months].sort((a, b) => a.month.localeCompare(b.month));
+  const allZero = sorted.every(m => m.mrr === 0);
+
+  if (allZero) {
+    el.innerHTML = `
+      <div class="prerevenue-state">
+        <div class="emoji">🚀</div>
+        <p>Pre-revenue — tracking from day one</p>
+        <p class="sub">MRR will appear here once the first subscription lands.</p>
+      </div>`;
+    return;
+  }
+
+  const W = 620, H = 210;
+  const padL = 58, padR = 22, padT = 18, padB = 46;
+  const cW = W - padL - padR;
+  const cH = H - padT - padB;
+
+  const maxVal = Math.max(...sorted.map(m => m.mrr), 1);
+  const n = sorted.length;
+
+  const pts = sorted.map((m, i) => ({
+    x: padL + (n > 1 ? i / (n - 1) : 0.5) * cW,
+    y: padT + cH - (m.mrr / maxVal) * cH,
+    m,
+  }));
+
+  // Smooth bezier: S-curve between consecutive points
+  function buildPath(points) {
+    if (!points.length) return '';
+    if (points.length === 1) return `M ${points[0].x} ${points[0].y}`;
+    let d = `M ${points[0].x} ${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const p0 = points[i - 1], p1 = points[i];
+      const cx = (p0.x + p1.x) / 2;
+      d += ` C ${cx} ${p0.y}, ${cx} ${p1.y}, ${p1.x} ${p1.y}`;
+    }
+    return d;
+  }
+
+  const linePath = buildPath(pts);
+  const baseY    = padT + cH;
+  const areaPath = `${linePath} L ${pts[pts.length - 1].x} ${baseY} L ${pts[0].x} ${baseY} Z`;
+
+  // Y-axis ticks: 0, 25%, 50%, 75%, 100%
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map(f => ({
+    y:     padT + cH * (1 - f),
+    label: '€' + (maxVal * f).toLocaleString('en-IE', { maximumFractionDigits: 0 }),
+  }));
+
+  // X-axis labels — abbreviate and thin out if many months
+  const step = n > 8 ? 3 : n > 4 ? 2 : 1;
+  const xLabels = pts.map((p, i) => {
+    if (i % step !== 0 && i !== n - 1) return '';
+    const parts = p.m.label.split(' ');
+    const short = parts.length === 2
+      ? `${parts[0].slice(0, 3)} '${parts[1].slice(2)}`
+      : p.m.label;
+    return `<text x="${p.x.toFixed(1)}" y="${H - 8}" text-anchor="middle" class="chart-label">${short}</text>`;
+  }).join('');
+
+  el.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" class="trend-svg" aria-hidden="true">
+      <defs>
+        <linearGradient id="mrr-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#30d158" stop-opacity="0.20"/>
+          <stop offset="100%" stop-color="#30d158" stop-opacity="0.01"/>
+        </linearGradient>
+      </defs>
+
+      ${yTicks.map(t => `
+        <line x1="${padL}" y1="${t.y.toFixed(1)}" x2="${W - padR}" y2="${t.y.toFixed(1)}"
+              stroke="rgba(0,0,0,0.07)" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="${padL - 7}" y="${(t.y + 4).toFixed(1)}" text-anchor="end" class="chart-label">${t.label}</text>
+      `).join('')}
+
+      <line x1="${padL}" y1="${padT}" x2="${padL}" y2="${baseY}"
+            stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+      <line x1="${padL}" y1="${baseY}" x2="${W - padR}" y2="${baseY}"
+            stroke="rgba(0,0,0,0.1)" stroke-width="1"/>
+
+      <path d="${areaPath}" fill="url(#mrr-fill)"/>
+      <path d="${linePath}" fill="none" stroke="#30d158" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+      ${pts.map(p =>
+        `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4"
+                 fill="#30d158" stroke="white" stroke-width="2"/>`
+      ).join('')}
+
+      ${xLabels}
+    </svg>
+  `;
+}
+
+// ─── Monthly breakdown ────────────────────────────────────────────────────────
+function renderMonths(months) {
+  document.getElementById('months-list').innerHTML = months.map(month => {
+    const exp = totalExp(month);
+    const net = month.mrr - exp;
+    const max = Math.max(month.mrr, exp, 0.01);
+    const mrrPct = (month.mrr / max * 100).toFixed(1);
+    const expPct = (exp  / max * 100).toFixed(1);
+
+    const expenseRows = month.expenses.map(e => `
+      <tr>
+        <td>${escHtml(e.label)}</td>
+        <td><span class="badge badge-${e.category}">${e.category}</span></td>
+        <td class="amount">${fmt(e.amount)}</td>
+        <td class="note">${escHtml(e.note || '')}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <details class="month-card">
+        <summary>
+          <div class="month-summary-left">
+            <span class="month-label">${month.label}</span>
+            <div class="month-kpis">
+              <span class="month-kpi">MRR ${fmt(month.mrr)}</span>
+              <span class="month-kpi">Expenses ${fmt(exp)}</span>
+              <span class="month-kpi ${net >= 0 ? 'positive' : 'negative'}">Net ${fmt(net)}</span>
+            </div>
+          </div>
+          <span class="month-chevron" aria-hidden="true">&#9660;</span>
+        </summary>
+        <div class="month-body">
+          <div class="bar-chart">
+            <div class="bar-row">
+              <span class="bar-label">MRR</span>
+              <div class="bar-track"><div class="bar bar-mrr" style="width:${mrrPct}%"></div></div>
+              <span class="bar-value">${fmt(month.mrr)}</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label">Expenses</span>
+              <div class="bar-track"><div class="bar bar-expenses" style="width:${expPct}%"></div></div>
+              <span class="bar-value">${fmt(exp)}</span>
+            </div>
+          </div>
+          ${month.expenses.length ? `
+            <div style="overflow-x:auto">
+              <table class="expense-table">
+                <thead><tr>
+                  <th>Item</th><th>Category</th><th>Amount</th><th>Note</th>
+                </tr></thead>
+                <tbody>${expenseRows}</tbody>
+              </table>
+            </div>
+          ` : '<p style="font-size:0.84rem;color:var(--text-muted)">No expenses recorded this month.</p>'}
+        </div>
+      </details>
+    `;
+  }).join('');
+}
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const res = await fetch('data.json?v=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    const months = [...data.months].sort((a, b) => b.month.localeCompare(a.month));
+
+    renderHero(months[0]);
+    renderTrend(months);
+    renderMonths(months);
+
+    document.getElementById('last-updated').textContent = data.lastUpdated || '—';
+    if (data.githubUrl) {
+      document.getElementById('github-link').href = data.githubUrl;
+    }
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('content').removeAttribute('hidden');
+  } catch (err) {
+    document.getElementById('loading').textContent =
+      'Could not load data — please refresh. (' + err.message + ')';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>

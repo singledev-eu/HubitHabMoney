@@ -1,0 +1,16 @@
+{
+  "lastUpdated": "2025-05",
+  "githubUrl": "https://github.com/singledev-eu/HubitHabMoney",
+  "months": [
+    {
+      "month": "2025-05",
+      "label": "May 2025",
+      "mrr": 0,
+      "expenses": [
+        { "label": "Apple Developer Account", "amount": 99, "category": "fixed", "note": "Annual, amortised €8.25/mo" },
+        { "label": "RevenueCat", "amount": 0, "category": "fixed", "note": "Free tier" },
+        { "label": "Render (proxy server)", "amount": 0, "category": "fixed", "note": "Free tier" }
+      ]
+    }
+  ]
+}
