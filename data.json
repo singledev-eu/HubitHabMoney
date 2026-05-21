@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-05",
+  "lastUpdated": "2026-05",
   "githubUrl": "https://github.com/singledev-eu/HubitHabMoney",
   "months": [
     {
@@ -7,9 +7,36 @@
       "label": "May 2025",
       "mrr": 0,
       "expenses": [
-        { "label": "Apple Developer Account", "amount": 99, "category": "fixed", "note": "Annual, amortised €8.25/mo" },
-        { "label": "RevenueCat", "amount": 0, "category": "fixed", "note": "Free tier" },
-        { "label": "Render (proxy server)", "amount": 0, "category": "fixed", "note": "Free tier" }
+        {
+          "label": "Apple Developer Account",
+          "amount": 99,
+          "category": "fixed",
+          "note": "Annual, amortised €8.25/mo"
+        },
+        {
+          "label": "RevenueCat",
+          "amount": 0,
+          "category": "fixed",
+          "note": "Free tier"
+        },
+        {
+          "label": "Render (proxy server)",
+          "amount": 0,
+          "category": "fixed",
+          "note": "Free tier"
+        },
+        {
+          "label": "",
+          "amount": 0,
+          "category": "fixed",
+          "note": ""
+        },
+        {
+          "label": "Namecheap domain name",
+          "amount": 6.02,
+          "category": "fixed",
+          "note": "Annual"
+        }
       ]
     }
   ]
